@@ -5,7 +5,8 @@ const initialState = {
     jsonOutput: "",
     jsonObj: {value: {}},
     errorMessage: "",
-    outputRow: 10
+    outputRow: 10,
+    expand: true,
 };
 
 export const jsonSlice = createSlice({
@@ -30,9 +31,12 @@ export const jsonSlice = createSlice({
         },
         setOutputRows: (state, action) => {
             state.outputRow = action.payload;
+        },
+        setExpand: (state, action) => {
+            state.expand = !state.expand;
         }
     },
 });
 
-export const { setJsonInput, setJsonOutput, parseJson, setErrorMessage, setOutputRows } = jsonSlice.actions;
+export const { setJsonInput, setJsonOutput, parseJson, setErrorMessage, setOutputRows, setExpand } = jsonSlice.actions;
 export const jsonParsingReducer = jsonSlice.reducer;

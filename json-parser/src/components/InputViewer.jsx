@@ -7,6 +7,7 @@ import {
   parseJson,
   setErrorMessage,
   setOutputRows,
+  setExpand,
 } from "@/lib/features/jsonParsing/jsonParsingSlice";
 import styles from "../styles/InputViewer.module.scss";
 import toast, { Toaster } from "react-hot-toast";
@@ -21,6 +22,7 @@ const InputViewer = () => {
     (state) => state.jsonParsing.errorMessage
   );
   const outputRow = useAppSelector((state) => state.jsonParsing.outputRow);
+  const expand = useAppSelector((state) => state.jsonParsing.expand);
   const dispatch = useAppDispatch();
 
   const handleCopy = (ln) => {
@@ -28,10 +30,29 @@ const InputViewer = () => {
     if (ln?.length > 0) toast.success("Text Copied!");
   };
 
+  let count = 0;
+
   const handleClear = () => {
     dispatch(setJsonOutput(""));
     dispatch(setOutputRows(10));
+    count = 0;
   };
+
+  const handleExapnd = () => {
+    for (let i of jsonOutputState) {
+      if (i == "\n") {
+        count++;
+      }
+    }
+    console.log("total lines = ", count);
+    dispatch(setOutputRows(count + 4));
+    dispatch(setExpand(false));
+  };
+
+  const handleShrink = () => {
+    dispatch(setOutputRows(10));
+    dispatch(setExpand(true));
+  }
 
   function convertObjToString(obj, num, prop2) {
     let string = [];
@@ -96,14 +117,6 @@ const InputViewer = () => {
             let output = convertObjToString(jsonObject, 1);
             console.log("final output = ", output);
             dispatch(setJsonOutput(output));
-            let count = 0;
-            for (let i of output) {
-              if (i == "\n") {
-                count++;
-              }
-            }
-            console.log("total lines = ", count);
-            dispatch(setOutputRows(count + 2));
           } catch (error) {
             toast.error(error.message);
             dispatch(setErrorMessage(error.message));
@@ -131,6 +144,14 @@ const InputViewer = () => {
             }}
           >
             Clear
+          </button>
+          <button
+            className={styles.btn2}
+            onClick={() => {
+              expand ? handleExapnd() : handleShrink();
+            }}
+          >
+            {expand ? "Expand" : "Shrink"}
           </button>
         </div>
         <textarea
