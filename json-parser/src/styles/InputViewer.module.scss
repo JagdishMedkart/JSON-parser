@@ -1,0 +1,80 @@
+.mainDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 2%;
+    width: 80%;
+}
+
+.secondDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #5e63b6;
+    padding: 2% 4%;
+    margin: 2% auto;
+    border-radius: 10px;
+    color: white;
+}
+
+.secondDiv2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #5e63b6;
+    padding: 4% 4% 2% 4%;
+    margin: 2% auto;
+    border-radius: 10px;
+    color: white;
+}
+
+.textarea {
+    padding: 2%;
+    border-radius: 10px;
+}
+
+.btn {
+    padding: 1% 4%;
+    font-size: 18px;
+    background-color:#27296d;
+    color: white;
+    border-radius: 10px;
+    &:hover {
+        cursor: pointer;
+
+    }
+}
+
+.div3 {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: end;
+    width: 105%;
+    margin-bottom: 1%;
+    margin-top: -3%;
+}
+
+.h3 {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.btn2 {
+    padding: 1%;
+    margin-left: 1%;
+    font-size: 12px;
+    background-color:#27296d;
+    color: white;
+    border-radius: 10px;
+    position: relative;
+    right: 0;
+    &:hover {
+        cursor: pointer;
+    }
+}
