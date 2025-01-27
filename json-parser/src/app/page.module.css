@@ -11,7 +11,7 @@
   align-items: center;
   justify-items: center;
   height: 100%;
-  padding: 10px;
+  padding-top: 10px;
   /* gap: 64px; */
   font-family: var(--font-geist-sans);
   /* background: url("../../public/img1.jpg");
@@ -24,7 +24,7 @@
 .h1 {
   font-size: 36px;
   font-weight: 900;
-  font-style: italic;
+  /* font-style: italic; */
   font-family: Arial, Helvetica, sans-serif;
 }
 

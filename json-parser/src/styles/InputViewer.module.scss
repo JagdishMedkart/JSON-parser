@@ -6,18 +6,7 @@
     margin: auto;
     margin-top: 2%;
     width: 80%;
-}
-
-.secondDiv {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: #5e63b6;
-    padding: 2% 4%;
-    margin: 2% auto;
-    border-radius: 10px;
-    color: white;
+    // box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);;
 }
 
 .secondDiv2 {
@@ -27,9 +16,10 @@
     flex-direction: column;
     background-color: #5e63b6;
     padding: 4% 4% 2% 4%;
-    margin: 2% auto;
+    margin: 1% auto;
     border-radius: 10px;
     color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .textarea {
@@ -38,14 +28,18 @@
 }
 
 .btn {
+    border: none;
     padding: 1% 4%;
     font-size: 18px;
     background-color:#27296d;
     color: white;
     border-radius: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
     &:hover {
         cursor: pointer;
-
+        background-color: black;
+        color: white;
     }
 }
 
@@ -66,7 +60,7 @@
 }
 
 .btn2 {
-    border: none;
+    border-color: none;
     padding: 1%;
     margin-left: 1%;
     font-size: 12px;
@@ -74,10 +68,12 @@
     color: white;
     border-radius: 10px;
     position: relative;
+    // transition: all 0.1s ease-in-out;
     right: 0;
     &:hover {
         cursor: pointer;
         background-color: #f5c7f7;
+        border-color: #f5c7f7;
         color: black;
     }
 }
