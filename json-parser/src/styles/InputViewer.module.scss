@@ -31,12 +31,13 @@
     border: none;
     padding: 1% 4%;
     font-size: 18px;
-    background-color:#27296d;
+    background-color: #27296d;
     color: white;
     border-radius: 10px;
     font-weight: bold;
     letter-spacing: 1px;
     margin: 1%;
+
     &:hover {
         cursor: pointer;
         background-color: black;
@@ -65,16 +66,35 @@
     padding: 1%;
     margin-left: 1%;
     font-size: 12px;
-    background-color:#27296d;
+    background-color: #27296d;
     color: white;
     border-radius: 10px;
     position: relative;
     // transition: all 0.1s ease-in-out;
     right: 0;
+
     &:hover {
         cursor: pointer;
         background-color: #f5c7f7;
         border-color: #f5c7f7;
         color: black;
+    }
+}
+
+.btn3 {
+    border: none;
+    padding: 2% 5%;
+    font-size: 18px;
+    background-color: #27296d;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 1%;
+    margin-top: 3%;
+    &:hover {
+        cursor: pointer;
+        background-color: black;
+        color: white;
     }
 }

@@ -172,7 +172,13 @@ const InputViewer = () => {
 
     return (
         <div className={styles.mainDiv}>
-            <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p>
+            {/* <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p> */}
+            <button className={styles.btn3}
+                onClick={() => {
+                    dispatch(setButtonState(buttonState));
+                }}>
+                {buttonState ? "JSON to Object" : "Stringified to JSON"}
+            </button>
             <div className={styles.secondDiv2}>
                 <div className={styles.div3}>
                     <button
@@ -206,7 +212,7 @@ const InputViewer = () => {
                     className={styles.textarea}
                     rows={inputRow}
                     cols={100}
-                    placeholder="Enter encoded URL...."
+                    placeholder={buttonState ? "Input JSON..." : "Stringified JSON...."}
                     value={jsonInputState}
                     onChange={(e) => dispatch(setJsonInput(e.target.value))}
                 />
@@ -240,7 +246,7 @@ const InputViewer = () => {
                             tmp = tmp.trim();
                             // console.log("tmp = ", tmp);
                             let countOccurence = tmp.split('\\\"').length - 1;
-                            // console.log(countOccurence);
+                            console.log(countOccurence);
                             if (countOccurence > 0) {
                                 if (tmp[0] == '\'' || tmp[0] == '"') {
                                     tmp = '"' + tmp.substring(1);
@@ -277,12 +283,6 @@ const InputViewer = () => {
             >
                 Decode
             </button>
-            <button className={styles.btn}
-                onClick={() => {
-                    dispatch(setButtonState(buttonState));
-                }}>
-                {buttonState ? "JSON to Object" : "Stringified to JSON"}
-            </button>
             <div className={styles.secondDiv2}>
                 <div className={styles.div3}>
                     <button
@@ -316,11 +316,12 @@ const InputViewer = () => {
                     className={styles.textarea}
                     rows={outputRow}
                     cols={100}
-                    placeholder="decoded URL...."
+                    placeholder={buttonState ? "Output Object..." : "Normal JSON...."}
                     value={jsonOutputState}
                     onChange={(e) => dispatch(setJsonOutput(e.target.value))}
                 />
             </div>
+            <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p>
             <Toaster />
         </div>
     );
