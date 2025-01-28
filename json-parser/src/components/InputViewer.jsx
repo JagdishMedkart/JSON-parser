@@ -35,12 +35,12 @@ const InputViewer = () => {
     let count = 0;
 
     const handleClear = (src) => {
-        if(src === "out") {
+        if (src === "out") {
             dispatch(setJsonOutput(""));
             dispatch(setOutputRows(10));
             count = 0;
         }
-        else if(src === "in") {
+        else if (src === "in") {
             dispatch(setJsonInput(""));
             dispatch(setInputRows(10));
             count2 = 0;
@@ -60,20 +60,21 @@ const InputViewer = () => {
 
     const checkCount = (num) => {
         let len = 0;
-        while(num > 0) {
-            len ++;
+        while (num > 0) {
+            len++;
             num = Math.floor(num / 10);
         }
         return len;
     }
 
     const handleCopy = (ln, src) => {
+        console.log("copy line = ", ln);
         if (ln?.length > 0) {
             let out = "";
             let count = 1;
-            for(let i = 4; i < ln.length; ) {
+            for (let i = 4; i < ln.length;) {
                 out += ln[i];
-                if(ln[i] == '\n') {
+                if (ln[i] == '\n') {
                     count++;
                     i += checkCount(count) + 3;
                 }
@@ -100,15 +101,28 @@ const InputViewer = () => {
     };
 
     const handleShrink = (src) => {
-        if(src === "in") {
+        if (src === "in") {
             dispatch(setInputRows(10));
             dispatch(setExpandInput(true));
         }
-        else if(src === "out") {
+        else if (src === "out") {
             dispatch(setOutputRows(10));
             dispatch(setExpandOutput(true));
         }
     };
+
+    const addNumbering = (output) => {
+        let res = "1.  ";
+        let cnt = 2;
+        for (let i of output) {
+            res += i;
+            if (i == "\n") {
+                res += (cnt + ".  ");
+                cnt++;
+            }
+        }
+        return res;
+    }
 
     function convertObjToString(obj, num, prop2) {
         let string = [];
@@ -123,9 +137,9 @@ const InputViewer = () => {
                     }
                     string.push(
                         tmp +
-                            prop +
-                            " : " +
-                            convertObjToString(obj[prop], num + 1, prop)
+                        prop +
+                        " : " +
+                        convertObjToString(obj[prop], num + 1, prop)
                     );
                 }
             }
@@ -133,9 +147,6 @@ const InputViewer = () => {
             for (let i = 0; i < num - 1; i++) {
                 tmp += "\t";
             }
-            // for (let i = 0; i < prop2?.length + 3; i++) {
-            //     tmp += " ";
-            // }
             return "{\n" + string.join(",\n") + "\n" + tmp + "}";
         } else if (typeof obj == "object" && !(obj.join == undefined)) {
             for (let prop in obj) {
@@ -208,40 +219,25 @@ const InputViewer = () => {
                             dispatch(setJsonOutput(""));
                             return;
                         }
-                        let resInput = "1.  ";
-                        let cntInput = 2;
-                        for(let i of jsonInputState) {
-                            resInput += i;
-                            if(i == "\n") {
-                                resInput += (cntInput + ".  ");
-                                cntInput++;
-                            }
-                        }
+                        let resInput = addNumbering(jsonInputState);
                         dispatch(setJsonInput(resInput));
-                        // console.log(jsonInputState);
-                        // console.log(JSON.stringify(jsonInputState));
-                        // console.log(JSON.parse(JSON.stringify(jsonInputState)));
-                        if(buttonState) {
+                        console.log(jsonInputState);
+                        console.log(JSON.stringify(jsonInputState));
+                        console.log(JSON.parse(JSON.stringify(jsonInputState)));
+                        if (buttonState) {
                             const jsonObject = JSON.parse(jsonInputState);
                             handleShrink("in");
                             handleShrink("out");
                             console.log("json object = ", jsonObject);
                             let output = convertObjToString(jsonObject, 1);
                             console.log("final output = ", output);
-                            let res = "1.  ";
-                            let cnt = 2;
-                            for(let i of output) {
-                                res += i;
-                                if(i == '\n') {
-                                    res += (cnt + ".  ");
-                                    cnt++;
-                                }
-                            }
-                            console.log(res);
+                            let res = addNumbering(output);
                             dispatch(setJsonOutput(res));
                         }
                         else {
-                            dispatch(setJsonOutput(JSON.parse((jsonInputState))));
+                            let output = JSON.parse((jsonInputState));
+                            let res = addNumbering(output);
+                            dispatch(setJsonOutput(res));
                         }
                     } catch (error) {
                         toast.error(error.message);
@@ -254,9 +250,9 @@ const InputViewer = () => {
                 Decode
             </button>
             <button className={styles.btn}
-            onClick = {() => {
-                dispatch(setButtonState(buttonState));
-            }}>
+                onClick={() => {
+                    dispatch(setButtonState(buttonState));
+                }}>
                 {buttonState ? "JSON to Object" : "Stringified to JSON"}
             </button>
             <div className={styles.secondDiv2}>
