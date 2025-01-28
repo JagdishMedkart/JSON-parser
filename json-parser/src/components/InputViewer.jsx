@@ -223,7 +223,7 @@ const InputViewer = () => {
                         let resInput = addNumbering(jsonInputState);
                         dispatch(setJsonInput(resInput));
                         // console.log(jsonInputState);
-                        console.log(JSON.stringify(jsonInputState));
+                        console.log(JSON.stringify(jsonInputState.trim()));
                         // console.log(JSON.parse(JSON.stringify(jsonInputState)));
                         if (buttonState) {
                             const jsonObject = JSON.parse(jsonInputState);
@@ -236,7 +236,34 @@ const InputViewer = () => {
                             dispatch(setJsonOutput(res));
                         }
                         else {
-                            let output = JSON.parse((jsonInputState));
+                            let tmp = jsonInputState;
+                            tmp = tmp.trim();
+                            // console.log("tmp = ", tmp);
+                            let countOccurence = tmp.split('\\\"').length - 1;
+                            // console.log(countOccurence);
+                            if (countOccurence > 0) {
+                                if (tmp[0] == '\'' || tmp[0] == '"') {
+                                    tmp = '"' + tmp.substring(1);
+                                }
+                                else {
+                                    tmp = '"' + tmp;
+                                }
+                                if (tmp[tmp.length - 1] == '\'')
+                                    tmp = tmp.substring(0, tmp.length - 1) + '"';
+                                if (tmp[tmp.length - 1] != '"')
+                                    tmp += '"';
+                                dispatch(setJsonInput(tmp));
+                            }
+                            else {
+                                tmp = tmp.replaceAll('"', '\\\"');
+                                tmp = tmp.replaceAll("'", '"');
+                                // console.log("new tmp = ", tmp);
+                            }
+                            // console.log(tmp);
+                            // console.log(jsonInputState);
+                            // console.log(JSON.parse("" + tmp + ""));
+                            let output = JSON.parse(tmp);
+                            // console.log(output);
                             let res = addNumbering(output);
                             dispatch(setJsonOutput(res));
                         }
