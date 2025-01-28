@@ -9,6 +9,7 @@ const initialState = {
     inputRow: 10,
     expandOutput: true,
     expandInput: true,
+    buttonState: true,
 };
 
 export const jsonSlice = createSlice({
@@ -35,9 +36,21 @@ export const jsonSlice = createSlice({
         },
         setExpandInput: (state, action) => {
             state.expandInput = action.payload;
+        },
+        setButtonState: (state, action) => {
+            state.buttonState = !(state.buttonState);
         }
     },
 });
 
-export const { setJsonInput, setJsonOutput, setErrorMessage, setOutputRows, setExpandOutput, setInputRows, setExpandInput } = jsonSlice.actions;
+export const
+    { setJsonInput,
+        setJsonOutput,
+        setErrorMessage,
+        setOutputRows,
+        setExpandOutput,
+        setInputRows,
+        setExpandInput,
+        setButtonState
+    } = jsonSlice.actions;
 export const jsonParsingReducer = jsonSlice.reducer;

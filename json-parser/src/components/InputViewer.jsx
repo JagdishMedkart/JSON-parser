@@ -9,6 +9,7 @@ import {
     setExpandOutput,
     setInputRows,
     setExpandInput,
+    setButtonState
 } from "@/lib/features/jsonParsing/jsonParsingSlice";
 import styles from "../styles/InputViewer.module.scss";
 import toast, { Toaster } from "react-hot-toast";
@@ -20,9 +21,6 @@ const InputViewer = () => {
     const jsonOutputState = useAppSelector(
         (state) => state.jsonParsing.jsonOutput
     );
-    const errorMessage = useAppSelector(
-        (state) => state.jsonParsing.errorMessage
-    );
     const outputRow = useAppSelector((state) => state.jsonParsing.outputRow);
     const inputRow = useAppSelector((state) => state.jsonParsing.inputRow);
     const expandOutput = useAppSelector(
@@ -31,21 +29,22 @@ const InputViewer = () => {
     const expandInput = useAppSelector(
         (state) => state.jsonParsing.expandInput
     );
+    const buttonState = useAppSelector((state) => state.jsonParsing.buttonState);
     const dispatch = useAppDispatch();
-
-    const handleCopyOutput = (ln) => {
-        if (ln?.length > 0) {
-            navigator.clipboard.writeText(ln);
-            toast.success("Output Text Copied!");
-        }
-    };
 
     let count = 0;
 
-    const handleClearOutput = () => {
-        dispatch(setJsonOutput(""));
-        dispatch(setOutputRows(10));
-        count = 0;
+    const handleClear = (src) => {
+        if(src === "out") {
+            dispatch(setJsonOutput(""));
+            dispatch(setOutputRows(10));
+            count = 0;
+        }
+        else if(src === "in") {
+            dispatch(setJsonInput(""));
+            dispatch(setInputRows(10));
+            count2 = 0;
+        }
     };
 
     const handleExpandOutput = () => {
@@ -59,22 +58,32 @@ const InputViewer = () => {
         dispatch(setExpandOutput(false));
     };
 
-    const handleShrinkOutput = () => {
-        dispatch(setOutputRows(10));
-        dispatch(setExpandOutput(true));
-    };
-
-    const handleCopyInput = (ln) => {
-        if (ln?.length > 0) {
-            navigator.clipboard.writeText(ln);
-            toast.success("Input Text Copied!");
+    const checkCount = (num) => {
+        let len = 0;
+        while(num > 0) {
+            len ++;
+            num = Math.floor(num / 10);
         }
-    };
+        return len;
+    }
 
-    const handleClearInput = () => {
-        dispatch(setJsonInput(""));
-        dispatch(setInputRows(10));
-        count2 = 0;
+    const handleCopy = (ln, src) => {
+        if (ln?.length > 0) {
+            let out = "";
+            let count = 1;
+            for(let i = 4; i < ln.length; ) {
+                out += ln[i];
+                if(ln[i] == '\n') {
+                    count++;
+                    i += checkCount(count) + 3;
+                }
+                i++;
+            }
+            navigator.clipboard.writeText(out);
+            console.log(out);
+            let toastMsg = (src === "in" ? "Input" : "Output") + " Text Copied";
+            toast.success(toastMsg);
+        }
     };
 
     let count2 = 0;
@@ -86,13 +95,19 @@ const InputViewer = () => {
             }
         }
         console.log("total lines = ", count2);
-        dispatch(setInputRows(count2 + 1));
+        dispatch(setInputRows(Math.max(count2 + 1, 10)));
         dispatch(setExpandInput(false));
     };
 
-    const handleShrinkInput = () => {
-        dispatch(setInputRows(10));
-        dispatch(setExpandInput(true));
+    const handleShrink = (src) => {
+        if(src === "in") {
+            dispatch(setInputRows(10));
+            dispatch(setExpandInput(true));
+        }
+        else if(src === "out") {
+            dispatch(setOutputRows(10));
+            dispatch(setExpandOutput(true));
+        }
     };
 
     function convertObjToString(obj, num, prop2) {
@@ -134,7 +149,8 @@ const InputViewer = () => {
             for (let i = 0; i < num - 1; i++) {
                 tmp += "\t";
             }
-            return "[\n" + string.join(",\n") + "\n" + tmp + "]";
+            let ans = "[\n" + string.join(",\n") + "\n" + tmp + "]";
+            return ans;
         } else if (typeof obj == "function") {
             string.push(obj.toString());
         } else {
@@ -150,7 +166,7 @@ const InputViewer = () => {
                     <button
                         className={styles.btn2}
                         onClick={() => {
-                            handleCopyInput(jsonInputState);
+                            handleCopy(jsonInputState, "in");
                         }}
                     >
                         Copy
@@ -158,7 +174,7 @@ const InputViewer = () => {
                     <button
                         className={styles.btn2}
                         onClick={() => {
-                            handleClearInput();
+                            handleClear("in");
                         }}
                     >
                         Clear
@@ -168,7 +184,7 @@ const InputViewer = () => {
                         onClick={() => {
                             expandInput
                                 ? handleExpandInput()
-                                : handleShrinkInput();
+                                : handleShrink("in");
                         }}
                     >
                         {expandInput ? "Expand" : "Shrink"}
@@ -192,13 +208,41 @@ const InputViewer = () => {
                             dispatch(setJsonOutput(""));
                             return;
                         }
-                        const jsonObject = JSON.parse(jsonInputState);
-                        handleShrinkInput();
-                        handleShrinkOutput();
-                        // console.log("json object = ", jsonObject);
-                        let output = convertObjToString(jsonObject, 1);
-                        // console.log("final output = ", output);
-                        dispatch(setJsonOutput(output));
+                        let resInput = "1.  ";
+                        let cntInput = 2;
+                        for(let i of jsonInputState) {
+                            resInput += i;
+                            if(i == "\n") {
+                                resInput += (cntInput + ".  ");
+                                cntInput++;
+                            }
+                        }
+                        dispatch(setJsonInput(resInput));
+                        // console.log(jsonInputState);
+                        // console.log(JSON.stringify(jsonInputState));
+                        // console.log(JSON.parse(JSON.stringify(jsonInputState)));
+                        if(buttonState) {
+                            const jsonObject = JSON.parse(jsonInputState);
+                            handleShrink("in");
+                            handleShrink("out");
+                            console.log("json object = ", jsonObject);
+                            let output = convertObjToString(jsonObject, 1);
+                            console.log("final output = ", output);
+                            let res = "1.  ";
+                            let cnt = 2;
+                            for(let i of output) {
+                                res += i;
+                                if(i == '\n') {
+                                    res += (cnt + ".  ");
+                                    cnt++;
+                                }
+                            }
+                            console.log(res);
+                            dispatch(setJsonOutput(res));
+                        }
+                        else {
+                            dispatch(setJsonOutput(JSON.parse((jsonInputState))));
+                        }
                     } catch (error) {
                         toast.error(error.message);
                         dispatch(setErrorMessage(error.message));
@@ -209,12 +253,18 @@ const InputViewer = () => {
             >
                 Decode
             </button>
+            <button className={styles.btn}
+            onClick = {() => {
+                dispatch(setButtonState(buttonState));
+            }}>
+                {buttonState ? "JSON to Object" : "Stringified to JSON"}
+            </button>
             <div className={styles.secondDiv2}>
                 <div className={styles.div3}>
                     <button
                         className={styles.btn2}
                         onClick={() => {
-                            handleCopyOutput(jsonOutputState);
+                            handleCopy(jsonOutputState, "out");
                         }}
                     >
                         Copy
@@ -222,7 +272,7 @@ const InputViewer = () => {
                     <button
                         className={styles.btn2}
                         onClick={() => {
-                            handleClearOutput();
+                            handleClear("out");
                         }}
                     >
                         Clear
@@ -232,7 +282,7 @@ const InputViewer = () => {
                         onClick={() => {
                             expandOutput
                                 ? handleExpandOutput()
-                                : handleShrinkOutput();
+                                : handleShrink("out");
                         }}
                     >
                         {expandOutput ? "Expand" : "Shrink"}
