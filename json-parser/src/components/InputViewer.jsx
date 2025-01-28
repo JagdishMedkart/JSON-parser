@@ -53,7 +53,7 @@ const InputViewer = () => {
                 count++;
             }
         }
-        console.log("total lines = ", count);
+        // console.log("total lines = ", count);
         dispatch(setOutputRows(Math.max(count + 1, 10)));
         dispatch(setExpandOutput(false));
     };
@@ -68,7 +68,7 @@ const InputViewer = () => {
     }
 
     const handleCopy = (ln, src) => {
-        console.log("copy line = ", ln);
+        // console.log("copy line = ", ln);
         if (ln?.length > 0) {
             let out = "";
             let count = 1;
@@ -81,7 +81,7 @@ const InputViewer = () => {
                 i++;
             }
             navigator.clipboard.writeText(out);
-            console.log(out);
+            // console.log(out);
             let toastMsg = (src === "in" ? "Input" : "Output") + " Text Copied";
             toast.success(toastMsg);
         }
@@ -95,7 +95,7 @@ const InputViewer = () => {
                 count2++;
             }
         }
-        console.log("total lines = ", count2);
+        // console.log("total lines = ", count2);
         dispatch(setInputRows(Math.max(count2 + 1, 10)));
         dispatch(setExpandInput(false));
     };
@@ -172,6 +172,7 @@ const InputViewer = () => {
 
     return (
         <div className={styles.mainDiv}>
+            <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p>
             <div className={styles.secondDiv2}>
                 <div className={styles.div3}>
                     <button
@@ -221,16 +222,16 @@ const InputViewer = () => {
                         }
                         let resInput = addNumbering(jsonInputState);
                         dispatch(setJsonInput(resInput));
-                        console.log(jsonInputState);
+                        // console.log(jsonInputState);
                         console.log(JSON.stringify(jsonInputState));
-                        console.log(JSON.parse(JSON.stringify(jsonInputState)));
+                        // console.log(JSON.parse(JSON.stringify(jsonInputState)));
                         if (buttonState) {
                             const jsonObject = JSON.parse(jsonInputState);
                             handleShrink("in");
                             handleShrink("out");
-                            console.log("json object = ", jsonObject);
+                            // console.log("json object = ", jsonObject);
                             let output = convertObjToString(jsonObject, 1);
-                            console.log("final output = ", output);
+                            // console.log("final output = ", output);
                             let res = addNumbering(output);
                             dispatch(setJsonOutput(res));
                         }
@@ -293,7 +294,6 @@ const InputViewer = () => {
                     onChange={(e) => dispatch(setJsonOutput(e.target.value))}
                 />
             </div>
-            <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p>
             <Toaster />
         </div>
     );
