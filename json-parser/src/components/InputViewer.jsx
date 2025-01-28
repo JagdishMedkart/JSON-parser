@@ -11,7 +11,7 @@ import {
     setExpandInput,
     setButtonState,
     setJsonObj,
-    removeKeys
+    removeKeys,
 } from "@/lib/features/jsonParsing/jsonParsingSlice";
 import styles from "../styles/InputViewer.module.scss";
 import toast, { Toaster } from "react-hot-toast";
@@ -32,9 +32,13 @@ const InputViewer = () => {
     const expandInput = useAppSelector(
         (state) => state.jsonParsing.expandInput
     );
-    const buttonState = useAppSelector((state) => state.jsonParsing.buttonState);
+    const buttonState = useAppSelector(
+        (state) => state.jsonParsing.buttonState
+    );
     const jsonObj = useAppSelector((state) => state.jsonParsing.jsonObj);
-    const expandedKeys = useAppSelector((state) => state.jsonParsing.expandedKeys);
+    const expandedKeys = useAppSelector(
+        (state) => state.jsonParsing.expandedKeys
+    );
     const dispatch = useAppDispatch();
     let jsonObject;
     let count = 0;
@@ -44,8 +48,7 @@ const InputViewer = () => {
             dispatch(setJsonOutput(""));
             dispatch(setOutputRows(10));
             count = 0;
-        }
-        else if (src === "in") {
+        } else if (src === "in") {
             dispatch(setJsonInput(""));
             dispatch(setInputRows(10));
             count2 = 0;
@@ -70,22 +73,12 @@ const InputViewer = () => {
             num = Math.floor(num / 10);
         }
         return len;
-    }
+    };
 
     const handleCopy = (ln, src) => {
         // console.log("copy line = ", ln);
         if (ln?.length > 0) {
-            let out = "";
-            let count = 1;
-            for (let i = 4; i < ln.length;) {
-                out += ln[i];
-                if (ln[i] == '\n') {
-                    count++;
-                    i += checkCount(count) + 3;
-                }
-                i++;
-            }
-            navigator.clipboard.writeText(out);
+            navigator.clipboard.writeText(ln);
             // console.log(out);
             let toastMsg = (src === "in" ? "Input" : "Output") + " Text Copied";
             toast.success(toastMsg);
@@ -109,8 +102,7 @@ const InputViewer = () => {
         if (src === "in") {
             dispatch(setInputRows(10));
             dispatch(setExpandInput(true));
-        }
-        else if (src === "out") {
+        } else if (src === "out") {
             dispatch(setOutputRows(10));
             dispatch(setExpandOutput(true));
         }
@@ -122,12 +114,12 @@ const InputViewer = () => {
         for (let i of output) {
             res += i;
             if (i == "\n") {
-                res += (cnt + ".  ");
+                res += cnt + ".  ";
                 cnt++;
             }
         }
         return res;
-    }
+    };
 
     function convertObjToString(obj, num, prop2) {
         let string = [];
@@ -142,9 +134,9 @@ const InputViewer = () => {
                     }
                     string.push(
                         tmp +
-                        prop +
-                        " : " +
-                        convertObjToString(obj[prop], num + 1, prop)
+                            prop +
+                            " : " +
+                            convertObjToString(obj[prop], num + 1, prop)
                     );
                 }
             }
@@ -178,12 +170,22 @@ const InputViewer = () => {
     return (
         <div className={styles.mainDiv}>
             {/* <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p> */}
-            <button className={styles.btn3}
+            {/* <button className={styles.btn3}
                 onClick={() => {
                     dispatch(setButtonState(buttonState));
                 }}>
                 {buttonState ? "JSON to Object" : "Stringified to JSON"}
-            </button>
+            </button> */}
+            <div className={styles.toggleSwitch}>
+                <input
+                    type="checkbox"
+                    id="toggleSwitch"
+                    checked={buttonState}
+                    onChange={() => dispatch(setButtonState(!buttonState))}
+                />
+                <label htmlFor="toggleSwitch" className={styles.slider}></label>
+            </div>
+            <h3 className={styles.h3}>{buttonState ? "JSON to Object" : "Stringified to JSON"}</h3>
             <div className={styles.secondDiv2}>
                 <div className={styles.div3}>
                     <button
@@ -217,9 +219,15 @@ const InputViewer = () => {
                     className={styles.textarea}
                     rows={inputRow}
                     cols={100}
-                    placeholder={buttonState ? "Input JSON..." : "Stringified JSON...."}
+                    placeholder={
+                        buttonState ? "Input JSON..." : "Stringified JSON...."
+                    }
                     value={jsonInputState}
-                    onChange={(e) => dispatch(setJsonInput(e.target.value))}
+                    onChange={(e) => {
+                        dispatch(setJsonInput(e.target.value));
+                        handleClear("out");
+                    }
+                    }
                 />
             </div>
             <button
@@ -249,27 +257,24 @@ const InputViewer = () => {
                             // console.log("final output = ", output);
                             // let res = addNumbering(output);
                             dispatch(setJsonOutput(output));
-                        }
-                        else {
+                        } else {
                             let tmp = jsonInputState;
                             tmp = tmp.trim();
                             // console.log("tmp = ", tmp);
-                            let countOccurence = tmp.split('\\\"').length - 1;
+                            let countOccurence = tmp.split('\\"').length - 1;
                             console.log(countOccurence);
                             if (countOccurence > 0) {
-                                if (tmp[0] == '\'' || tmp[0] == '"') {
+                                if (tmp[0] == "'" || tmp[0] == '"') {
                                     tmp = '"' + tmp.substring(1);
-                                }
-                                else {
+                                } else {
                                     tmp = '"' + tmp;
                                 }
-                                if (tmp[tmp.length - 1] == '\'')
-                                    tmp = tmp.substring(0, tmp.length - 1) + '"';
-                                if (tmp[tmp.length - 1] != '"')
-                                    tmp += '"';
+                                if (tmp[tmp.length - 1] == "'")
+                                    tmp =
+                                        tmp.substring(0, tmp.length - 1) + '"';
+                                if (tmp[tmp.length - 1] != '"') tmp += '"';
                                 dispatch(setJsonInput(tmp));
-                            }
-                            else {
+                            } else {
                                 console.log("hello");
                                 console.log("tmp = ", tmp);
                                 tmp = tmp.trim();
@@ -277,9 +282,10 @@ const InputViewer = () => {
                                     tmp = "'" + tmp.substring(1);
                                 }
                                 if (tmp[tmp.length - 1] == '"') {
-                                    tmp = tmp.substring(0, tmp.length - 1) + "'";
+                                    tmp =
+                                        tmp.substring(0, tmp.length - 1) + "'";
                                 }
-                                tmp = tmp.replaceAll('"', '\\\"');
+                                tmp = tmp.replaceAll('"', '\\"');
                                 tmp = tmp.replaceAll("'", '"');
                                 console.log("new tmp = ", tmp);
                             }
@@ -333,13 +339,17 @@ const InputViewer = () => {
                 <textarea
                     className={styles.textarea}
                     rows={outputRow}
-                    cols={100}
-                    placeholder={buttonState ? "Output Object..." : "Normal JSON...."}
+                    placeholder={
+                        buttonState ? "Output Object..." : "Normal JSON...."
+                    }
                     value={jsonOutputState}
                     onChange={(e) => dispatch(setJsonOutput(e.target.value))}
                 />
             </div>
-            <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p>
+            <p>
+                Helpful tip/caution: Always use given copy buttons only to copy
+                the text... :)
+            </p>
             <Toaster />
             {jsonInputState && jsonOutputState && buttonState && <Json />}
         </div>
