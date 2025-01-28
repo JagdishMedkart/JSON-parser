@@ -293,6 +293,7 @@ const InputViewer = () => {
                     onChange={(e) => dispatch(setJsonOutput(e.target.value))}
                 />
             </div>
+            <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p>
             <Toaster />
         </div>
     );
