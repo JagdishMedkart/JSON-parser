@@ -1,0 +1,80 @@
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleExpand } from "@/store/slices/jsonSlice";
+import styles from "@/styles/JsonViewer.module.scss";
+
+const JsonViewer = ({ data, level = 0, parentKey = "" }) => {
+  const dispatch = useDispatch();
+  const expandedKeys = useSelector((state) => state.jsonViewer.expandedKeys);
+
+  const toggleNode = (key) => {
+    dispatch(toggleExpand(key));
+  };
+
+  const isObjectOrArray = (value) =>
+    typeof value === "object" && value !== null;
+
+  if (isObjectOrArray(data)) {
+    const uniqueKey = `${parentKey}-${level}`;
+    const isExpanded = expandedKeys[uniqueKey] ?? true; // Default to expanded
+
+    return (
+      <div className={styles.jsonBlock} style={{ marginLeft: `${level * 20}px` }}>
+        <button
+          onClick={() => toggleNode(uniqueKey)}
+          className={styles.toggleButton}
+        >
+          {isExpanded ? "-" : "+"}
+        </button>
+        <span className={styles.jsonKey}>
+          {Array.isArray(data) ? "[Array]" : "{Object}"}
+        </span>
+        {isExpanded && (
+          <div className={styles.jsonContent}>
+            {Object.entries(data).map(([key, value], index) => (
+              <div key={index} className={styles.jsonItem}>
+                <span className={styles.jsonKey}>{key}: </span>
+                <JsonViewer
+                  data={value}
+                  level={level + 1}
+                  parentKey={`${uniqueKey}-${key}`}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  } else {
+    return <span className={styles.jsonValue}>{JSON.stringify(data)}</span>;
+  }
+};
+
+export default function Home() {
+  const sampleData = {
+    name: "John Doe",
+    age: 30,
+    address: {
+      street: "123 Main St",
+      city: "Springfield",
+      country: "USA",
+    },
+    hobbies: ["reading", "traveling", "gaming"],
+    education: {
+      highSchool: "Springfield High",
+      college: {
+        name: "Springfield University",
+        yearGraduated: 2015,
+      },
+    },
+  };
+
+  return (
+    <div className={styles.container}>
+      <h1>JSON Viewer</h1>
+      <div className={styles.jsonViewer}>
+        <JsonViewer data={sampleData} />
+      </div>
+    </div>
+  );
+}

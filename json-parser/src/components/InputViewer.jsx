@@ -9,10 +9,13 @@ import {
     setExpandOutput,
     setInputRows,
     setExpandInput,
-    setButtonState
+    setButtonState,
+    setJsonObj,
+    removeKeys
 } from "@/lib/features/jsonParsing/jsonParsingSlice";
 import styles from "../styles/InputViewer.module.scss";
 import toast, { Toaster } from "react-hot-toast";
+import Json from "./JsonViewer";
 
 const InputViewer = () => {
     const jsonInputState = useAppSelector(
@@ -30,8 +33,10 @@ const InputViewer = () => {
         (state) => state.jsonParsing.expandInput
     );
     const buttonState = useAppSelector((state) => state.jsonParsing.buttonState);
+    const jsonObj = useAppSelector((state) => state.jsonParsing.jsonObj);
+    const expandedKeys = useAppSelector((state) => state.jsonParsing.expandedKeys);
     const dispatch = useAppDispatch();
-
+    let jsonObject;
     let count = 0;
 
     const handleClear = (src) => {
@@ -53,7 +58,7 @@ const InputViewer = () => {
                 count++;
             }
         }
-        // console.log("total lines = ", count);
+        console.log("total lines = ", count);
         dispatch(setOutputRows(Math.max(count + 1, 10)));
         dispatch(setExpandOutput(false));
     };
@@ -221,25 +226,29 @@ const InputViewer = () => {
                 className={styles.btn}
                 onClick={() => {
                     try {
+                        dispatch(removeKeys({}));
+                        console.log("removing keys");
                         dispatch(setErrorMessage(""));
                         if (jsonInputState === "") {
                             dispatch(setJsonOutput(""));
                             return;
                         }
-                        let resInput = addNumbering(jsonInputState);
-                        dispatch(setJsonInput(resInput));
+                        //let resInput = addNumbering(jsonInputState);
+                        dispatch(setJsonInput(jsonInputState));
                         // console.log(jsonInputState);
                         console.log(JSON.stringify(jsonInputState.trim()));
                         // console.log(JSON.parse(JSON.stringify(jsonInputState)));
                         if (buttonState) {
-                            const jsonObject = JSON.parse(jsonInputState);
+                            jsonObject = JSON.parse(jsonInputState);
+                            dispatch(setJsonObj(jsonObject));
                             handleShrink("in");
                             handleShrink("out");
-                            // console.log("json object = ", jsonObject);
+                            console.log("json object = ", jsonObject);
+                            console.log("redux object = ", jsonObj);
                             let output = convertObjToString(jsonObject, 1);
                             // console.log("final output = ", output);
-                            let res = addNumbering(output);
-                            dispatch(setJsonOutput(res));
+                            // let res = addNumbering(output);
+                            dispatch(setJsonOutput(output));
                         }
                         else {
                             let tmp = jsonInputState;
@@ -261,17 +270,26 @@ const InputViewer = () => {
                                 dispatch(setJsonInput(tmp));
                             }
                             else {
+                                console.log("hello");
+                                console.log("tmp = ", tmp);
+                                tmp = tmp.trim();
+                                if (tmp[0] == '"') {
+                                    tmp = "'" + tmp.substring(1);
+                                }
+                                if (tmp[tmp.length - 1] == '"') {
+                                    tmp = tmp.substring(0, tmp.length - 1) + "'";
+                                }
                                 tmp = tmp.replaceAll('"', '\\\"');
                                 tmp = tmp.replaceAll("'", '"');
-                                // console.log("new tmp = ", tmp);
+                                console.log("new tmp = ", tmp);
                             }
                             // console.log(tmp);
                             // console.log(jsonInputState);
                             // console.log(JSON.parse("" + tmp + ""));
                             let output = JSON.parse(tmp);
                             // console.log(output);
-                            let res = addNumbering(output);
-                            dispatch(setJsonOutput(res));
+                            // let res = addNumbering(output);
+                            dispatch(setJsonOutput(output));
                         }
                     } catch (error) {
                         toast.error(error.message);
@@ -323,6 +341,7 @@ const InputViewer = () => {
             </div>
             <p>Helpful tip/caution: Always use given copy buttons only to copy the text... :)</p>
             <Toaster />
+            {jsonInputState && jsonOutputState && buttonState && <Json />}
         </div>
     );
 };

@@ -1,0 +1,75 @@
+.container {
+    display: flex;
+    width: 90%;
+    font-family: Arial, sans-serif;
+    justify-content: start;
+    // padding: 1%;
+    overflow-wrap: break-word; 
+    margin: 1%;
+    transition: all 1s ease-in-out;
+}
+
+.jsonViewer {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14px;
+    width: 100%;
+}
+
+.jsonBlock {
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    // align-items: center;
+}
+
+.jsonItem {
+    margin: 5px 0;
+}
+
+.jsonKey {
+    font-weight: bold;
+    color: #333;
+}
+
+.jsonValue {
+    color: #0070f3;
+}
+
+.jsonCollapsed {
+    color: #999;
+    font-style: italic;
+}
+
+.toggleButton {
+    border: none;
+    // padding: 1% 4%;
+    font-size: 18px;
+    background-color: #27296d;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    letter-spacing: 1px;
+    // margin: 1%;
+    width: 22px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: black;
+        color: white;
+    }
+}
+
+.jsonContent {
+    margin-left: 20px;
+}
+
+.innerDiv {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1%;
+}

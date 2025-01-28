@@ -3,13 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     jsonInput: "",
     jsonOutput: "",
-    jsonObj: { value: {} },
+    jsonObj: "",
     errorMessage: "",
     outputRow: 10,
     inputRow: 10,
     expandOutput: true,
     expandInput: true,
     buttonState: true,
+    expandedKeys: {},
 };
 
 export const jsonSlice = createSlice({
@@ -39,6 +40,22 @@ export const jsonSlice = createSlice({
         },
         setButtonState: (state, action) => {
             state.buttonState = !(state.buttonState);
+        },
+        setToggleExpand: (state, action) => {
+            const key = action.payload;
+            state.expandedKeys[key] = !state.expandedKeys[key];
+        },
+        setJsonObj: (state, action) => {
+            state.jsonObj = action.payload;
+        },
+        removeKeys: (state, action) => {
+            return {
+                ...state, 
+                expandedKeys: {
+                    ...state.expandedKeys,
+                    
+                }
+            }
         }
     },
 });
@@ -51,6 +68,9 @@ export const
         setExpandOutput,
         setInputRows,
         setExpandInput,
-        setButtonState
+        setButtonState,
+        setToggleExpand,
+        setJsonObj,
+        removeKeys
     } = jsonSlice.actions;
 export const jsonParsingReducer = jsonSlice.reducer;
